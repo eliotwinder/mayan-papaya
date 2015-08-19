@@ -1,7 +1,7 @@
-var getQuestions = require('../../models/trivia/triviaRoutes');
+// var getQuestions = require('../models/trivia/triviaRoutes');
 var unirest = require('unirest');
 
-var getQuestions = function(){
+var getQuestions = function(callback){
   unirest.get("http://jservice.io/api/random?count=10") // changed to 100
     .header("Accept", "application/json")
     .end(function (result) {
@@ -17,7 +17,7 @@ var getQuestions = function(){
         trivia.value = collection[i].value;
         triviaArr.push(trivia);
     }
-    return triviaArr;
+    callback(triviaArr);
   });
 };
 
@@ -25,29 +25,30 @@ module.exports = function(app){
   var httpServer = require('http').Server(app);
   var io = require('socket.io')(httpServer);
 
-  var questions = getQuestions();
-
-  for (var i = 0; i < questions.length; i++) {
-    questions[i].playersAttempted = [];
-  }
-
-  // Things to keep track of
-  var gameObj = {
-    players: [],
-    questions: questions,
-    maxNumQuestions: 10,
-    questionNumber: -1,
-    currQuest: function(){
-      return this.questions[this.questionNumber];
-    },
-    prevQuest: function(){
-      if (this.questionNumber === 0) {
-        return null;
-      } else {
-        return this.questions[this.questionNumber - 1];
-      }
+  getQuestions(function(qs){
+    var questions = qs;
+    for (var i = 0; i < questions.length; i++) {
+      questions[i].playersAttempted = [];
     }
-  };
+
+    // Things to keep track of
+    var gameObj = {
+      players: [],
+      questions: questions,
+      maxNumQuestions: 10,
+      questionNumber: -1,
+      currQuest: function(){
+        return this.questions[this.questionNumber];
+      },
+      prevQuest: function(){
+        if (this.questionNumber === 0) {
+          return null;
+        } else {
+          return this.questions[this.questionNumber - 1];
+        }
+      }
+    };
+  });
 
   var moveOnToNextQuestion = function() {
     gameObj.questionNumber++;

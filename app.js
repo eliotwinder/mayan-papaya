@@ -1,3 +1,4 @@
+var politifacts = require('./server/models/trivia/politifacts');
 var express = require('express');
 var path = require('path');
 var mongoose = require('mongoose');
@@ -19,6 +20,8 @@ db.once('open', function (callback) {
 
 // server-side socket.io
 require('./server/config/serversocketio.js')(app);
+
+// politifacts.getPolitifacts('donald-trump');
 
 // only run server if app.js was run directly (rather than being
 // imported as a module)
