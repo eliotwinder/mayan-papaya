@@ -46,12 +46,12 @@
         data: { publicallyAccessible: false }
       })
           .state('stats.global', {
-            url: '/global',
+            url: '/global?d3values=data',
             templateUrl: 'views/stats.global.html',
             data: { publicallyAccessible: false }
           })
           .state('stats.personal', {
-            url: '/personal',
+            url: '/personal?data',
             templateUrl: 'views/stats.personal.html',
             data: { publicallyAccessible: false }
           })
